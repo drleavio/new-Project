@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import user from "../../public/images/user.jpg";
 import bell from "../../public/images/bell.svg";
 import loader from "../../public/images/loader.svg";
@@ -12,8 +13,42 @@ import team from "../../public/images/team.svg";
 import NavBar from "@/components/NavBar";
 import plus from "../../public/images/plus.svg";
 import download from "../../public/images/download.svg";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import spinnerWhite from "../../public/images/spinnerWhite.svg";
 
 const Menu = () => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    const fetchdata = async () => {
+      try {
+        const response = await axios.get("/api/data");
+        // console.log(response.data.data.name);
+        setName(response.data.data.name);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchdata();
+  }, []);
+
+  const logout = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("/api/logout");
+      if (response.data.success) {
+        router.push("/");
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
   const data = [
     {
       icon: home.src,
@@ -43,7 +78,7 @@ const Menu = () => {
           <div className="image">
             <img className="inside-image" src={user.src} alt="" />
           </div>
-          <div className="name">Joe Gardner</div>
+          <div className="name">{name}</div>
         </div>
         <div className="header-bottom">
           <div className="hb-icon">
@@ -59,7 +94,9 @@ const Menu = () => {
             </div>
           </div>
           <div className="btn">
-            <Button className="inside-btn">Logout</Button>
+            <Button disabled={loading} onClick={logout} className="inside-btn">
+              {loading ? <img src={spinnerWhite.src} alt="" /> : null}Logout
+            </Button>
           </div>
         </div>
       </div>

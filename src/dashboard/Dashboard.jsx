@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import questionmark from "../../public/images/questionmark.svg";
 import people from "../../public/images/people.jpeg";
 import { Input } from "@/components/ui/input";
@@ -13,10 +13,11 @@ import plus from "../../public/images/plus.svg";
 import hamburger from "../../public/images/hamburger.svg";
 import clock from "../../public/images/clock.svg";
 import Modal from "@/components/Modal";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import axios from "axios";
 import clsx from "clsx";
 
 const Dashboard = () => {
+  const [name, setName] = useState("");
   const [time, setTime] = useState(new Date());
   const [showTitle, setShowTitle] = useState(false);
   const [showProgress, setShowProgress] = useState(false);
@@ -52,67 +53,69 @@ const Dashboard = () => {
   });
   const [todo, setTodo] = useState([
     {
-      title: "rahul",
+      title: "Implement user authentication",
       status: "pending",
       priority: "Urgent",
       deadline: "5 may",
-      description: "hello my name is rahul",
+      description: "Middleware will be invokl",
     },
     {
-      title: "rahul",
+      title: "design home page ui",
       status: "pending",
       priority: "Low",
       deadline: "5 may",
-      description: "hello my name is rahul",
-    },
-    {
-      title: "rahul",
-      status: "pending",
-      priority: "Urgent",
-      deadline: "5 may",
-      description: "hello my name is rahul",
-    },
-    {
-      title: "rahul",
-      status: "pending",
-      priority: "Medium",
-      deadline: "5 may",
-      description: "hello my name is rahul",
+      description:
+        "hello my nameMiddleware will be invoked for every route in your project. Given this, it's crucial ",
     },
   ]);
   const [progress, setProgress] = useState([
     {
-      title: "rahul",
+      title: "Test cross browser compatibility",
       status: time.toString().substring(0, 10) + " ago",
-      priority: "Urgent",
+      priority: "Medium",
       deadline: "5 may",
-      description: "hello my name is rahul",
+      description:
+        "hello my name is rahul Middleware will be invoked for every route in your project. Given this, it's crucial ",
     },
   ]);
   const [review, setReview] = useState([
     {
-      title: "rahul",
+      title: "Conduct user feedback survey",
       status: "pending",
-      priority: "Urgent",
+      priority: "Medium",
       deadline: "5 may",
-      description: "hello my name is rahul",
+      description:
+        "Middleware will be invoked for every route in your project. Given this, it's crucial ",
     },
   ]);
   const [finished, setFinished] = useState([
     {
-      title: "rahul",
+      title: "integrate cloud storage",
       status: "pending",
-      priority: "Low",
+      priority: "Urgent",
       deadline: "5 may",
-      description: "hello my name is rahul",
+      description:
+        "Middleware will be invoked for every route in your project. Given this, it's crucial to use matchers to precisely target or exclude specific routes.",
     },
   ]);
+  useEffect(() => {
+    const fetchdata = async () => {
+      try {
+        const response = await axios.get("/api/data");
+        // console.log(response.data.data.name);
+        setName(response.data.data.name);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchdata();
+  }, []);
 
   return (
     <>
       <div className="dashboard-main">
         <div className="upper-container">
-          <div className="header">Good morning, Joe!</div>
+          <div className="header">Good morning, {name}!</div>
           <div className="right-section">
             Help & feedback{" "}
             <div className="rs-div">
@@ -200,263 +203,237 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="todos">
-          <DragDropContext onDragEnd={() => {}}>
-            <div className="todo-list">
-              <div className="todo-main">
-                <div className="todo-header">
-                  <div className="top-section">To do</div>
-                  <div className="side-section">
-                    <img src={hamburger.src} alt="" />
-                  </div>
+          <div className="todo-list">
+            <div className="todo-main">
+              <div className="todo-header">
+                <div className="top-section">To do</div>
+                <div className="side-section">
+                  <img src={hamburger.src} alt="" />
                 </div>
-                <Droppable droppableId="title">
-                  {(provided) => (
-                    <div
-                      className="card"
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
-                      {todo.map((opt, ind) => {
-                        return (
-                          <Draggable
-                            draggableId={ind.toString()}
-                            index={ind}
-                            key={ind.toString()}
+              </div>
+
+              <div className="card">
+                {todo.map((opt, ind) => {
+                  return (
+                    <>
+                      <div className="main" key={ind}>
+                        <div className="title">{opt.title}</div>
+                        <div className="description">{opt.description}</div>
+                        <div className="priority">
+                          <div
+                            className={clsx("inside-priority", {
+                              " green": opt.priority == "Low",
+                              red: opt.priority == "Medium",
+                              " orange": opt.priority == "Urgent",
+                            })}
                           >
-                            {(provided) => (
-                              <>
-                                <div
-                                  className="main"
-                                  key={ind}
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                >
-                                  <div className="title">{opt.title}</div>
-                                  <div className="description">
-                                    {opt.description}
-                                  </div>
-                                  <div className="priority">
-                                    <div
-                                      className={clsx("inside-priority", {
-                                        " green": opt.priority == "Low",
-                                        red: opt.priority == "Medium",
-                                        " orange": opt.priority == "Urgent",
-                                      })}
-                                    >
-                                      {opt.priority}
-                                    </div>
-                                  </div>
-                                  <div className="deadline">
-                                    <div className="d-img">
-                                      <img src={clock.src} alt="" />
-                                    </div>
-                                    <div className="d-text">{opt.deadline}</div>
-                                  </div>
-                                  <div className="status">{opt.status}</div>
-                                </div>
-                              </>
-                            )}
-                          </Draggable>
-                        );
-                      })}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-                <div
-                  onClick={() => {
-                    setShowTitle(true);
-                  }}
-                  className="modal-btn"
-                >
-                  <Modal
-                    show={showTitle}
-                    setShow={setShowTitle}
-                    data={titledata}
-                    setData={setTitleData}
-                    todo={todo}
-                    setTodo={setTodo}
-                  />
-                  <div className="plus-icon">
-                    <img className="img" src={plus.src} alt="" />
-                  </div>
-                </div>
-              </div>
-              <div className="todo-main">
-                <div className="todo-header">
-                  <div className="top-section">To do</div>
-                  <div className="side-section">
-                    <img src={hamburger.src} alt="" />
-                  </div>
-                </div>
-                <div className="card">
-                  {progress.length &&
-                    progress.map((opt, ind) => {
-                      return (
-                        <>
-                          <div className="main" key={ind}>
-                            <div className="title">{opt.title}</div>
-                            <div className="description">{opt.description}</div>
-                            <div className="priority">
-                              <div
-                                className={clsx("inside-priority", {
-                                  " green": opt.priority == "Low",
-                                  red: opt.priority == "Medium",
-                                  " orange": opt.priority == "Urgent",
-                                })}
-                              >
-                                {opt.priority}
-                              </div>
-                            </div>
-                            <div className="deadline">
-                              <div className="d-img">
-                                <img src={clock.src} alt="" />
-                              </div>
-                              <div className="d-text">{opt.deadline}</div>
-                            </div>
-                            <div className="status">{opt.status}</div>
+                            {opt.priority}
                           </div>
-                        </>
-                      );
-                    })}
-                </div>
-                <div
-                  onClick={() => {
-                    setShowProgress(true);
-                  }}
-                  className="modal-btn"
-                >
-                  <Modal
-                    show={showProgress}
-                    setShow={setShowProgress}
-                    data={progressdata}
-                    setData={setProgressData}
-                    todo={progress}
-                    setTodo={setProgress}
-                  />
-                  <div className="plus-icon">
-                    <img className="img" src={plus.src} alt="" />
-                  </div>
-                </div>
-              </div>
-              <div className="todo-main">
-                <div className="todo-header">
-                  <div className="top-section">To do</div>
-                  <div className="side-section">
-                    <img src={hamburger.src} alt="" />
-                  </div>
-                </div>
-                <div className="card">
-                  {review.map((opt, ind) => {
-                    return (
-                      <>
-                        <div className="main" key={ind}>
-                          <div className="title">{opt.title}</div>
-                          <div className="description">{opt.description}</div>
-                          <div className="priority">
-                            <div
-                              className={clsx("inside-priority", {
-                                " green": opt.priority == "Low",
-                                red: opt.priority == "Medium",
-                                " orange": opt.priority == "Urgent",
-                              })}
-                            >
-                              {opt.priority}
-                            </div>
-                          </div>
-                          <div className="deadline">
-                            <div className="d-img">
-                              <img src={clock.src} alt="" />
-                            </div>
-                            <div className="d-text">{opt.deadline}</div>
-                          </div>
-                          <div className="status">{opt.status}</div>
                         </div>
-                      </>
-                    );
-                  })}
-                </div>
-                <div
-                  onClick={() => {
-                    setShowReview(true);
-                  }}
-                  className="modal-btn"
-                >
-                  <Modal
-                    show={showReview}
-                    setShow={setShowReview}
-                    data={reviewData}
-                    setData={setReviewData}
-                    todo={review}
-                    setTodo={setReview}
-                  />
-                  <div className="plus-icon">
-                    <img className="img" src={plus.src} alt="" />
-                  </div>
-                </div>
-              </div>
-              <div className="todo-main">
-                <div className="todo-header">
-                  <div className="top-section">To do</div>
-                  <div className="side-section">
-                    <img src={hamburger.src} alt="" />
-                  </div>
-                </div>
-                <div className="card">
-                  {finished.map((opt, ind) => {
-                    return (
-                      <>
-                        <div className="main" key={ind}>
-                          <div className="title">{opt.title}</div>
-                          <div className="description">{opt.description}</div>
-                          <div className="priority">
-                            <div
-                              className={clsx("inside-priority", {
-                                " green": opt.priority == "Low",
-                                red: opt.priority == "Medium",
-                                " orange": opt.priority == "Urgent",
-                              })}
-                            >
-                              {opt.priority}
-                            </div>
+                        <div className="deadline">
+                          <div className="d-img">
+                            <img src={clock.src} alt="" />
                           </div>
-                          <div className="deadline">
-                            <div className="d-img">
-                              <img src={clock.src} alt="" />
-                            </div>
-                            <div className="d-text">{opt.deadline}</div>
-                          </div>
-                          <div className="status">{opt.status}</div>
+                          <div className="d-text">{opt.deadline}</div>
                         </div>
-                      </>
-                    );
-                  })}
-                </div>
-                <div
-                  onClick={() => {
-                    setShowFinished(true);
-                  }}
-                  className="modal-btn"
-                >
-                  <Modal
-                    show={showFinished}
-                    setShow={setShowFinished}
-                    data={finisheddata}
-                    setData={setFinishedData}
-                    todo={finished}
-                    setTodo={setFinished}
-                  />
-                  <div className="plus-icon">
-                    <img className="img" src={plus.src} alt="" />
-                  </div>
+                        <div className="status">{opt.status}</div>
+                      </div>
+                    </>
+                  );
+                })}
+              </div>
+
+              <div
+                onClick={() => {
+                  setShowTitle(true);
+                }}
+                className="modal-btn"
+              >
+                <Modal
+                  show={showTitle}
+                  setShow={setShowTitle}
+                  data={titledata}
+                  setData={setTitleData}
+                  todo={todo}
+                  setTodo={setTodo}
+                />
+                <div className="plus-icon">
+                  <img className="img" src={plus.src} alt="" />
                 </div>
               </div>
             </div>
-          </DragDropContext>
+            <div className="todo-main">
+              <div className="todo-header">
+                <div className="top-section">To do</div>
+                <div className="side-section">
+                  <img src={hamburger.src} alt="" />
+                </div>
+              </div>
+              <div className="card">
+                {progress.length &&
+                  progress.map((opt, ind) => {
+                    return (
+                      <>
+                        <div className="main" key={ind}>
+                          <div className="title">{opt.title}</div>
+                          <div className="description">{opt.description}</div>
+                          <div className="priority">
+                            <div
+                              className={clsx("inside-priority", {
+                                " green": opt.priority == "Low",
+                                red: opt.priority == "Medium",
+                                " orange": opt.priority == "Urgent",
+                              })}
+                            >
+                              {opt.priority}
+                            </div>
+                          </div>
+                          <div className="deadline">
+                            <div className="d-img">
+                              <img src={clock.src} alt="" />
+                            </div>
+                            <div className="d-text">{opt.deadline}</div>
+                          </div>
+                          <div className="status">{opt.status}</div>
+                        </div>
+                      </>
+                    );
+                  })}
+              </div>
+              <div
+                onClick={() => {
+                  setShowProgress(true);
+                }}
+                className="modal-btn"
+              >
+                <Modal
+                  show={showProgress}
+                  setShow={setShowProgress}
+                  data={progressdata}
+                  setData={setProgressData}
+                  todo={progress}
+                  setTodo={setProgress}
+                />
+                <div className="plus-icon">
+                  <img className="img" src={plus.src} alt="" />
+                </div>
+              </div>
+            </div>
+            <div className="todo-main">
+              <div className="todo-header">
+                <div className="top-section">To do</div>
+                <div className="side-section">
+                  <img src={hamburger.src} alt="" />
+                </div>
+              </div>
+              <div className="card">
+                {review.map((opt, ind) => {
+                  return (
+                    <>
+                      <div className="main" key={ind}>
+                        <div className="title">{opt.title}</div>
+                        <div className="description">{opt.description}</div>
+                        <div className="priority">
+                          <div
+                            className={clsx("inside-priority", {
+                              " green": opt.priority == "Low",
+                              red: opt.priority == "Medium",
+                              " orange": opt.priority == "Urgent",
+                            })}
+                          >
+                            {opt.priority}
+                          </div>
+                        </div>
+                        <div className="deadline">
+                          <div className="d-img">
+                            <img src={clock.src} alt="" />
+                          </div>
+                          <div className="d-text">{opt.deadline}</div>
+                        </div>
+                        <div className="status">{opt.status}</div>
+                      </div>
+                    </>
+                  );
+                })}
+              </div>
+              <div
+                onClick={() => {
+                  setShowReview(true);
+                }}
+                className="modal-btn"
+              >
+                <Modal
+                  show={showReview}
+                  setShow={setShowReview}
+                  data={reviewData}
+                  setData={setReviewData}
+                  todo={review}
+                  setTodo={setReview}
+                />
+                <div className="plus-icon">
+                  <img className="img" src={plus.src} alt="" />
+                </div>
+              </div>
+            </div>
+            <div className="todo-main">
+              <div className="todo-header">
+                <div className="top-section">To do</div>
+                <div className="side-section">
+                  <img src={hamburger.src} alt="" />
+                </div>
+              </div>
+              <div className="card">
+                {finished.map((opt, ind) => {
+                  return (
+                    <>
+                      <div className="main" key={ind}>
+                        <div className="title">{opt.title}</div>
+                        <div className="description">{opt.description}</div>
+                        <div className="priority">
+                          <div
+                            className={clsx("inside-priority", {
+                              " green": opt.priority == "Low",
+                              red: opt.priority == "Medium",
+                              " orange": opt.priority == "Urgent",
+                            })}
+                          >
+                            {opt.priority}
+                          </div>
+                        </div>
+                        <div className="deadline">
+                          <div className="d-img">
+                            <img src={clock.src} alt="" />
+                          </div>
+                          <div className="d-text">{opt.deadline}</div>
+                        </div>
+                        <div className="status">{opt.status}</div>
+                      </div>
+                    </>
+                  );
+                })}
+              </div>
+              <div
+                onClick={() => {
+                  setShowFinished(true);
+                }}
+                className="modal-btn"
+              >
+                <Modal
+                  show={showFinished}
+                  setShow={setShowFinished}
+                  data={finisheddata}
+                  setData={setFinishedData}
+                  todo={finished}
+                  setTodo={setFinished}
+                />
+                <div className="plus-icon">
+                  <img className="img" src={plus.src} alt="" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      {/* <Modal show={show} setShow={setShow} /> */}
     </>
   );
 };

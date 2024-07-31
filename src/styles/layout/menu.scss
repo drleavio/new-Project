@@ -65,7 +65,10 @@
         }
       }
       .btn {
+        display: flex;
         .inside-btn {
+          display: flex;
+          gap: 5px;
           padding: 8px;
           color: #b1adb5;
           font-weight: 500;
@@ -92,6 +95,7 @@
         padding: 10px;
         border-radius: 8px;
         color: white;
+        border:0;
         font-weight: 500;
         font-size: 20px;
         gap: 10px;
