@@ -14,6 +14,10 @@ const userSchema = mongoose.Schema({
     type: String,
     required: [true, "must provide a password"],
   },
+  otp: {
+    type: String,
+    required: [true, "please provide an otp"],
+  },
 });
 
 const UserData =

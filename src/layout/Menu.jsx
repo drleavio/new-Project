@@ -16,6 +16,7 @@ import download from "../../public/images/download.svg";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import spinnerWhite from "../../public/images/spinnerWhite.svg";
+import clsx from "clsx";
 
 const Menu = () => {
   const router = useRouter();
@@ -71,60 +72,72 @@ const Menu = () => {
       val: "Analytics",
     },
   ];
+  const [show, setShow] = useState(false);
   return (
-    <div className="menu-container">
-      <div className="header">
-        <div className="header-upper">
-          <div className="image">
-            <img className="inside-image" src={user.src} alt="" />
+    <>
+      <div className="mobile-nav"></div>
+      <div
+        className={clsx("menu-container", {
+          "not-show": !show,
+        })}
+      >
+        <div className="header">
+          <div className="header-upper">
+            <div className="image">
+              <img className="inside-image" src={user.src} alt="" />
+            </div>
+            <div className="name">{name}</div>
           </div>
-          <div className="name">{name}</div>
+          <div className="header-bottom">
+            <div className="hb-icon">
+              <div className="img">
+                <img src={bell.src} alt="" />
+              </div>
+              <div className="img main-point">
+                <img src={loader.src} alt="" />
+                <div className="point"></div>
+              </div>
+              <div className="img">
+                <img src={rightarrow.src} alt="" />
+              </div>
+            </div>
+            <div className="btn">
+              <Button
+                disabled={loading}
+                onClick={logout}
+                className="inside-btn"
+              >
+                {loading ? <img src={spinnerWhite.src} alt="" /> : null}Logout
+              </Button>
+            </div>
+          </div>
         </div>
-        <div className="header-bottom">
-          <div className="hb-icon">
-            <div className="img">
-              <img src={bell.src} alt="" />
-            </div>
-            <div className="img main-point">
-              <img src={loader.src} alt="" />
-              <div className="point"></div>
-            </div>
-            <div className="img">
-              <img src={rightarrow.src} alt="" />
-            </div>
-          </div>
-          <div className="btn">
-            <Button disabled={loading} onClick={logout} className="inside-btn">
-              {loading ? <img src={spinnerWhite.src} alt="" /> : null}Logout
+        <div className="middle-section">
+          {data.map((opt, ind) => {
+            return <NavBar key={ind} icon={opt.icon} val={opt.val} />;
+          })}
+          <div className="middle-btn">
+            <Button className="inside-middle-btn">
+              Create new task{" "}
+              <div className="plus-icon">
+                <img src={plus.src} alt="" />
+              </div>{" "}
             </Button>
           </div>
         </div>
-      </div>
-      <div className="middle-section">
-        {data.map((opt, ind) => {
-          return <NavBar key={ind} icon={opt.icon} val={opt.val} />;
-        })}
-        <div className="middle-btn">
-          <Button className="inside-middle-btn">
-            Create new task{" "}
-            <div className="plus-icon">
-              <img src={plus.src} alt="" />
-            </div>{" "}
-          </Button>
-        </div>
-      </div>
-      <div className="bottom-section">
-        <div className="inside-bs">
-          <div className="bs-img">
-            <img className="bs-icon" src={download.src} alt="" />
-          </div>
-          <div className="bs-text">
-            <div className="upper-text">Download the App</div>
-            <div className="lower-text">Get the full experience</div>
+        <div className="bottom-section">
+          <div className="inside-bs">
+            <div className="bs-img">
+              <img className="bs-icon" src={download.src} alt="" />
+            </div>
+            <div className="bs-text">
+              <div className="upper-text">Download the App</div>
+              <div className="lower-text">Get the full experience</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

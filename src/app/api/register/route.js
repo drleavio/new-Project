@@ -3,6 +3,7 @@ import { dbConnect } from "utils/dbConnect";
 import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import UserData from "./../../../../models/userModel";
+import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
 
 export async function POST(NextRequest) {
   // return { message: "inside post" };
@@ -13,6 +14,7 @@ export async function POST(NextRequest) {
     console.log(name, email, password);
     const userExist = await UserData.findOne({ email });
     console.log(userExist);
+
     if (userExist) {
       return NextResponse.json(
         {
@@ -23,11 +25,23 @@ export async function POST(NextRequest) {
       );
     }
     const hashedPassword = await bcryptjs.hash(password, 10);
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
     const response = await UserData.create({
       name,
       email,
       password: hashedPassword,
+      otp,
     });
+    const sendEmail = await sendVerificationEmail(email, name, otp);
+    if (!sendEmail) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "error sending mail",
+        },
+        { status: 500 }
+      );
+    }
     console.log(response);
     return NextResponse.json(
       {
