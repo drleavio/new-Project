@@ -46,7 +46,7 @@ const Login = () => {
 
       if (response.data.success) {
         toast.success("signup successfully");
-        router.push("/otp", { name: info.email });
+        router.push("/");
       }
     } catch (error) {
       console.log("error doing signup", error.message);
